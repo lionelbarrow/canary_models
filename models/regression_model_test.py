@@ -1,58 +1,12 @@
 from unittest import TestCase
-import numpy as np
-
-from xml.dom.minidom import parseString
 import datetime, pickle
 
-from feed import APIDataFeed
-from controller import DataFeedController
-from models import RegressionModel, SERIES
+import numpy as np
 
-class TestData(object):
+from canary_models.models.regression_model import RegressionModel, SERIES
+from canary_models.test_helpers.test_data import TestData
 
-    def __init__(self):
-        test_data = open("predictive_models/sample_data.txt")
-        self.FED_DATA = pickle.load(test_data)
-        test_data.close()
-
-class Feed_Unit(TestCase):
-
-    def test_is_good_date_returns_true_correctly(self):
-        feed = APIDataFeed()
-        good_date_dom = parseString('<observation date="2012-9-29" />')
-        good_date = good_date_dom.getElementsByTagName('observation')[0]
-
-        self.assertTrue(feed.is_good_date(good_date))
-
-    def test_is_good_date_returns_false_correctly(self):
-        feed = APIDataFeed()
-        bad_date_dom = parseString('<observation date="1929-10-20" />')
-        bad_date = bad_date_dom.getElementsByTagName('observation')[0]
-
-        self.assertFalse(feed.is_good_date(bad_date))
-
-    def test_observation_values_returns_floats(self):
-        feed = APIDataFeed()
-        dom = parseString('<observation value=".12" />').getElementsByTagName('observation')
-        values = feed.observation_values(dom)
-
-        self.assertTrue(isinstance(values[0], float))
-
-class Controller_Unit(TestCase):
-
-    def test_build_probit_model_runs_without_error(self):
-        controller = DataFeedController()
-        model = controller.probit_model(1)
-        self.assertTrue(isinstance(model, RegressionModel))
-
-class Controller_Integration(TestCase):
-
-    def test_get_previous_data_returns_correctly(self):
-        controller = DataFeedController()
-        previous_data = controller.all_probit_data(1)
-        self.assertTrue(True)
-
-class Model_Unit(TestCase):
+class RegressionModelTest(TestCase):
 
     def test_validate_accepts_all_legitimate_series(self):
         names = SERIES[:-1]

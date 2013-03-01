@@ -1,21 +1,21 @@
-from django.shortcuts import render_to_response
-from django.template import RequestContext
-
-from models import RegressionModel, SERIES
-from feed import APIDataFeed
-
-import json
+from canary_models.models.regression_model import RegressionModel, SERIES
+from canary_models.feeds.data_feed import DataFeed
+from canary_models.utils.utils import return_as_json
 
 DEFAULT_MONTHS_FORWARD = 6
 
-def format_data_as_json(**kwargs):
-    arg_dict = {}
-    for word, value in kwargs.iteritems():
-        arg_dict[word] = value
-    return json.dumps(arg_dict)
+class DataController(object):
+
+    def __init__(self, testing=False):
+        self.testing = testing
+        self.data_feed = DataFeed(testing=testing)
+
+    @return_as_json
+    def fed_funds_series(self, start_date, end_date):
+        return self.data_feed.get_series("FEDFUNDS", start_date, end_date)
 
 
-class DataFeedController(object):
+class DataAPIController(object):
 
     def all_probit_data(self, months_forward):
         model = self.probit_model(months_forward)
@@ -27,9 +27,6 @@ class DataFeedController(object):
         feed = APIDataFeed()
         all_series = {series: feed.get_series(series) for series in SERIES}
         return RegressionModel(all_series, months_forward)
-
-
-class DataAPIController(object):
 
     @staticmethod
     def probit_data(request):
