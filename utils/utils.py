@@ -1,5 +1,4 @@
 from datetime import date
-
 import json
 
 def return_as_json(f):

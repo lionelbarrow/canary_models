@@ -1,16 +1,18 @@
 from unittest import TestCase
 from datetime import date
+import json
 
 from canary_models.controllers.data_controller import DataController
+from canary_models.feeds.fake_gateway import FakeGateway
 
 class ControllerTest(TestCase):
 
     def test_fed_funds_series_happy_path(self):
-        controller = DataController(testing=True)
+        controller = DataController()
+        controller.data_feed.gateway = FakeGateway()
         start_date = date(year=2010, day=1, month=1)
-        end_date = date(year=2010, day=31, month=12)
+        end_date = date(year=2011, day=1, month=1)
         series_json = controller.fed_funds_series(start_date, end_date)
-        print series_json
         series = json.loads(series_json)
         self.assertEqual(len(series), 12)
 

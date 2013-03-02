@@ -5,5 +5,8 @@ class Observation(object):
         self.date = date
         self.value = value
 
-    def in_range(self, start_date, end_date):
-        pass
+    def in_date_range(self, start_date, end_date):
+        return start_date < self.date and self.date <= end_date
+
+    def to_dict(self):
+        return {"series": self.series_name, "date": str(self.date), "value": self.value}
